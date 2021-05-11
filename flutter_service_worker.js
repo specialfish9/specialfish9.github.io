@@ -4,17 +4,22 @@ const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 const RESOURCES = {
   "manifest.json": "5e060ec018945f3a6d8611ed08f95728",
-"main.dart.js": "7268e5725b24be8b7dbcec6d2bed5da6",
+"main.dart.js": "76c5bda51b132bb6e4539d36c0afe7b0",
 "icons/Icon-192.png": "ac9a721a12bbc803b44f645561ecb1e1",
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
-"index.html": "bb71c21dabf03a1281d373fe8e4f1bf1",
-"/": "bb71c21dabf03a1281d373fe8e4f1bf1",
+"index.html": "239f79fe1944193324430ef2516db590",
+"/": "239f79fe1944193324430ef2516db590",
 "favicon.png": "5dcef449791fa27946b3d35ad8803796",
-"assets/AssetManifest.json": "2efbb41d7877d10aac9d091f58ccd7b9",
+"assets/AssetManifest.json": "24cd5cdd4cae61e990fd9344af82f8fd",
+"assets/fonts/BalooPaaji2-Bold.ttf": "c28a68b1bdd512e8db0eca06744d5193",
+"assets/fonts/BalooPaaji2-Regular.ttf": "9b538d73efd7c492a32292dbc63b79fc",
+"assets/fonts/BalooPaaji2-ExtraBold.ttf": "d63a21a5d665fda45261cffe392fbd09",
 "assets/fonts/MaterialIcons-Regular.otf": "1288c9e28052e028aba623321f7826ac",
 "assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": "6d342eb68f170c97609e9da345464e5e",
-"assets/NOTICES": "b87e7ceb9de555cb3775cbfd1db2618c",
-"assets/FontManifest.json": "dc3d03800ccca4601324923c0b1d6d57",
+"assets/NOTICES": "c6e8f0bb90cb7f5c6ae1f498517aec95",
+"assets/FontManifest.json": "643b60b8bf6cfd7bfe933f550ca657b1",
+"assets/assets/phone.png": "20557bc363ee0fe674b8cdea0c0b5cac",
+"assets/assets/playstore.png": "0b0baeb13a319a86d41b9efaa72c2848",
 "version.json": "283db823de17fe237e605c51b153c9f4"
 };
 
