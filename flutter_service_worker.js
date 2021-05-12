@@ -3,12 +3,12 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 const RESOURCES = {
-  "manifest.json": "5e060ec018945f3a6d8611ed08f95728",
-"main.dart.js": "76c5bda51b132bb6e4539d36c0afe7b0",
+  "manifest.json": "75655bee6f1ba2b6338db2b59f281947",
+"main.dart.js": "6c9a76141e11413a23379bf51464047d",
 "icons/Icon-192.png": "ac9a721a12bbc803b44f645561ecb1e1",
 "icons/Icon-512.png": "96e752610906ba2a93c65f8abe1645f1",
-"index.html": "239f79fe1944193324430ef2516db590",
-"/": "239f79fe1944193324430ef2516db590",
+"index.html": "4efe18e18d4b71445858eb64856384f3",
+"/": "4efe18e18d4b71445858eb64856384f3",
 "favicon.png": "5dcef449791fa27946b3d35ad8803796",
 "assets/AssetManifest.json": "24cd5cdd4cae61e990fd9344af82f8fd",
 "assets/fonts/BalooPaaji2-Bold.ttf": "c28a68b1bdd512e8db0eca06744d5193",
@@ -20,7 +20,7 @@ const RESOURCES = {
 "assets/FontManifest.json": "643b60b8bf6cfd7bfe933f550ca657b1",
 "assets/assets/phone.png": "20557bc363ee0fe674b8cdea0c0b5cac",
 "assets/assets/playstore.png": "0b0baeb13a319a86d41b9efaa72c2848",
-"version.json": "283db823de17fe237e605c51b153c9f4"
+"version.json": "45d587e8bf3d09be00b8b460ac77c6db"
 };
 
 // The application shell files that are downloaded before a service worker can

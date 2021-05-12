@@ -1,11 +1,11 @@
 {
-    "name": "sgio",
-    "short_name": "sgio",
+    "name": "specialfish9",
+    "short_name": "specialfish9",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Mattia Girolimetto's personal website",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
