@@ -2,22 +2,20 @@
 layout: default
 title: Go and Errors
 ---
-# Hello
-
 # Go and Errors
 
 If you have experience with other programming languages, when you first
-have to deal with the way Go handles errors, chances are that you may
-ask yourself a big "why?!". In this blog post I will _go_ (no pun intended)
-through some "rules of thumb" that I find useful when programming in Go.
+deal with the way Go handles errors, chances are that you will ask yourself
+"why?!". In this blog post I will _go_ (no pun intended)
+through some rules of thumb that I find useful when programming in Go.
 
 ## The basics
 Let's start simple: in Go errors are simple values, much like all the other
 variables you may define. They are not "thrown" and "caught" like exceptions
 in other programming languages, they are simply returned to the function's
-caller as any normal return value:
+caller like any normal return value:
 ```go
-// doStuff1 behavies like a 'void' function, but it could
+// doStuff1 behaves like a 'void' function, but it could
 // fail.
 func doStuff1() error
 
@@ -26,11 +24,11 @@ func doStuff1() error
 func doStuff2() (int, error)
 ```
 
-### Rule n.1
+### Rule No.1
 If a function has multiple return values, the `error` should always be
     the last one.
 
-Let's move on the caller side now:
+Let's move on to the caller side now:
 ```go
 a, err := doStuff2()
 if err != nil {
@@ -40,19 +38,19 @@ if err != nil {
 // ...
 ```
 
-The caller should always check for error, and the usual way
-to do that is using the famous `if err != nil` statement. As you 
+The caller should always check for an error, and the usual way
+to do that is using the famous `if err != nil` patterns. As you 
 can imagine, this single line of code is super popular in every Go 
-project, causing many people's complaints and desire for some sugar
+project, causing many people's complaints and desires for some sugar
 syntax like Rust's `?`. There was (and still is) a humongous number 
-of threads online arguing whether the language should do something
+of online threads arguing whether the language should do something
 about it. However, as always with Go's philosophy, explicit is better
 than implicit and, by consequence, `if err != nil` won.
 
-### Rule n.2
+### Rule No.2
 Always prefer `if err != nil` over `if err == nil` statements. 
 
-### Rule n.3
+### Rule No.3
 When calling a function that returns an error, you should always
 check it. If, for some reason, you don't want to, be sure to highlight
 it using the blank identifier `_`:
@@ -77,14 +75,15 @@ other format functions defined in the `fmt` package:
 var err = fmt.Errorf("file '%s' not found", fileName)
 ```
 
-Errors created with these functions are often referred to as _sentinel errors_.
-Later on we will come back to `fmt.Errorf`, as it hides more power
-that it seems at first glance, but for now let's move on.
+Errors created with these functions, when kept as package-level variables,
+are often referred to as _sentinel errors_.
+Later on, we will come back to `fmt.Errorf`, as it hides more power
+than it seems at first glance, but for now let's move on.
 
-If you look under the hood of the `error` type implementation in the
-standard library you will see that it's actually a super simple interface:
+If you look under the hood of the `error` type implementation, you will
+see that it's actually a super simple interface:
 ```go
-type Error interface {
+type error interface {
     Error() string
 }
 ```
@@ -103,16 +102,16 @@ func (ae *APIError) Error() string {
 
 func MyWonderfulAPI() error {
     // ...
-    return APIError {
+    return &APIError {
         StatusCode: 404,
         Message:    "Resource not found",
     }
 }
 ```
 
-### Rule n.4
-When writing a function's signature, prefer `error` over your
-custom error type:
+### Rule No.4
+When writing a signature for a public function, prefer returning
+`error` over your custom error type:
 ```go
 // Do
 func MyWonderfulAPI() error 
@@ -123,14 +122,14 @@ func MyWonderfulAPI() APIError
 We will go back to error types later on.
 
 ## Handling errors
-In the previous paragraph we saw many ways of creating new errors,
-so now we will see that there also are multiple ways of handling 
+In the previous section we saw many ways of creating new errors,
+so now we will see that there are also multiple ways of handling 
 them. Starting from the first: the easiest way to handle an error is
-...to delegate this honour to the caller i.e. not handling it.
+...to delegate this honor to the caller, i.e., not handling it.
 In fact, there are some cases in which you don't want to handle an
 error in any way, but you just want to let it slip to the caller of
-the function you are writing. This is very common and, how you all
-have probably already guessed, you can achieve it with a simple:
+the function you are writing. This is very common and, as you have
+all probably guessed, you can achieve it with a simple:
 ```go
 err := doStuff1()
 if err != nil {
@@ -145,13 +144,13 @@ back to our `fmt.Errorf` example. Using that function, we created
 a new error with a message `"file 'insertFileName.here' not found"`.
 When we created it, it sounded like a reasonable explanation for
 an error message. However, in the big scheme of things that is 
-you current shiny new Go project, that information alone might not
+your current shiny new Go project, that information alone might not
 be enough. For example, you may want to know which component of 
 your application tried to open that file and why.
 Fortunately, Go has us covered with the concept of _error wrapping_.
 The idea is similar to a matrioska: while your error goes down the
 call tree, whenever needed, it gets wrapped again and again with
-additional context, enabling for a better post inspection. Sounds
+additional context, enabling for a better post-mortem inspection. Sounds
 kinda complex, doesn't it? But I can assure you it's not. To do so
 in practice we just have to go back again to the `fmt.Errorf` function,
 and use the appropriate placeholder:
@@ -159,7 +158,7 @@ and use the appropriate placeholder:
 err := doStuff1()
 if err != nil {
     // Wrap the error with additional context.
-    // This become: "can't initialize cache: file 'insertFileName.here' not found"
+    // This becomes: "can't initialize cache: file 'insertFileName.here' not found"
     return fmt.Errorf("can't initialize cache: %w", err)
 }
 ```
@@ -172,15 +171,15 @@ service: can't initialize cache: file 'insertFileName.here' not found
 Writing a good error message is kind of hard, and it comes with experience 
 I guess. Here are some rules that I personally find useful.
 
-### Rule n.6
+### Rule No.6
 Error messages should always start with a lowercase letter and should always be
-chained using a column (`:`).
+chained using a colon (`:`).
 
-### Rule n.7
-Add context to errors only when needed. Do not abuse it, otherwise the error message
+### Rule No.7
+Add context to errors only when it is needed. Do not abuse it, otherwise the error message
 will become tedious to read.
 
-### Rule n.8
+### Rule No.8
 Try to avoid writing the word "error" in the message as it will cause the message's
 length to increase, and it's probably already implicit:
 ```
@@ -188,8 +187,8 @@ error initializing app: cron service: error starting "someRandomJob" job: cache
 service: error while initializing cache: error: file 'insertFileName.here' not found
 ```
 
-### Rule n.9
-Sometimes is useful to add a label with the name of the component handling the error
+### Rule No.9
+Sometimes it is useful to add a label with the name of the component handling the error
 (e.g.: `cron service:`), just to highlight that the error passed through that component.
 However, this should only be done in public functions, to avoid the risk of having it
 repeated many times in the same error message:
@@ -199,25 +198,26 @@ from db: user not found
 ```
 
 Last but not least, Go offers another way of handling errors: panicking. It's okay
-to panic, but it should be done very, very carefully. For those that lives under a
+to panic, but it should be done very, very carefully. For those who live under a
 rock, the Go programming language offers a `panic` function, which causes the program
 to crash. This must be used only as your code's last resort. I usually follow the next
 rule:
 
-### Rule n.10
+### Rule No.10
 `panic` only in the `main` function.
 
-When a panic occurs, there better be error message attached, explaining all the history
-from the very beginning to the source of the failure. The last thing you want is for
+When a panic occurs, there had better be an error message attached to it, explaining
+the full history from the very beginning to the source of the failure.
+The last thing you want is for
 your application to crash for a panic in some function invoked by a dependency of your
-dependency, without knowing who invoked that and why. 
+dependency, without knowing who invoked it and why. 
 
 With that said, sometimes there is really no other thing to do: it might be that you can't
 proceed with the flow, and you can't return a normal error at the same time. In that case,
 panicking is indeed okay, but 
 
-### Rule n.11
-Advise the developer whose going to call your panicking function with a godoc comment.
+### Rule No.11
+Advise the developer who's going to call your panicking function with a godoc comment.
 
 Additionally, sometimes it's useful for a package to offer two versions of the same utility
 function. Taking the `regexp` package from the standard library as example:
@@ -233,14 +233,14 @@ func Compile(expr string) (*Regexp, error)
 func MustCompile(str string) *Regexp
 ```
 
-### Rule n.12
+### Rule No.12
 Use the prefix "Must" in your function's name if it panics instead of returning 
 an error.
 
 While we are here, there's another bonus rule related to handling errors
 
-### Rule n.13
-Never log AND return the error, as it could lead to the same error to being logged 
+### Rule No.13
+Never log AND return the error, as it could lead to the same error being logged 
 multiple times.
 
 ## Combined errors
@@ -254,7 +254,7 @@ for _, input := range inputs {
 ```
 Often, you can simply fail at the first occurrence of an error, and call it a day. 
 However, sometimes it's better to run _all_ the operations first, and then return 
-a some _combined error_ later. Meet `errors.Join`: 
+a _combined error_ later. Meet `errors.Join`: 
 ```go
 var err error
 for _, input := range inputs {
@@ -266,9 +266,17 @@ if err != nil {
 ```
 
 `errors.Join` _joins_ all the errors given as argument together returning a new,
-combined, error. If one of the arguments is nil, it will be skipped.
+combined, error. If one of the arguments is nil, it will be skipped, hence
+if all the arguments are nil, `errors.Join` will return nil too.
+Note that the `for` loop will terminate only when all inputs are consumed,
+i.e., `check` will be executed once for each element of the `inputs` slice,
+even if some previous iteration returned an error.
+Additionally, note also that this code was intentionally kept short for
+simplicity's sake, but in a real life scenario you would probably want to
+add some context to the errors returned by `check`, for example which input
+failed.
 
-### Rule n.14
+### Rule No.14
 Use `errors.Join` when dealing with combined errors.
 
 Now that I introduced you to combined errors, it is time to abandon our "matrioska"
@@ -276,7 +284,7 @@ metaphor. In fact, the structure we build by wrapping errors is actually a tree.
 Sorry for having lied to you. Later we will come back to this tree concept and see
 what we can do with it, but for now let's stick with combined errors.
 
-A similar, yet different pattern that often occurs is confronting with multiple
+A similar, yet different pattern that often occurs is dealing with multiple
 asynchronous operations. In that case, you may want to use the `errgroup` package
 from the `golang.org/x/sync/errgroup` package:
 ```go
@@ -306,7 +314,7 @@ together with a `sync.WaitGroup`.
 
 ## Exploring the error tree
 Before going through how can we explore the error tree I would like to spend
-few more words on how to add nodes to this tree using error wrapping.
+a few more words on how to add nodes to this tree using error wrapping.
 
 Until now, the only way to wrap errors I've shown you is through `fmt.Errorf`,
 but it's not the only way. You can implement your own wrapping logic by making
@@ -315,13 +323,13 @@ composite errors) method.
 
 ```go
 type APIError struct {
-    StatusCode  int     `json:"statusCode`
-    Message     string  `json:"message`
+    StatusCode  int     `json:"statusCode"`
+    Message     string  `json:"message"`
     innerErr    error
 }
 
 func NewAPIErr(status int, err error) error {
-    return APIError {
+    return &APIError {
         StatusCode: status,
         innerErr: err,
         Message: err.Error(),
@@ -336,18 +344,13 @@ func (ae *APIError) Unwrap() error {
 ```
 
 
-### Rule n.15
+### Rule No.15
 If your custom error contains another error inside, always implement the `Unwrap`
 method, as (__Spoiler alert!__) the `Unwrap` method will be used by some cool
 functions to navigate the tree.
 
 One last thing on wrapping: what if you want to add some context to an error
 using `fmt.Errorf` without actually wrapping it? Easy: use the `%v` placeholder
-
-### Rule n.16
-If your custom error contains another error inside, always implement the `Unwrap`
-method, as (__Spoiler alert!__) the `Unwrap` method will be used by some cool
-functions to navigate the tree.
 
 
 ```go
@@ -382,24 +385,24 @@ func Login(username string, password string) error { /* ... */ }
 // ...
 
 err := auth.Login(username, password)
-if error.Is(err, auth.ErrUnauthorized) {
+if errors.Is(err, auth.ErrUnauthorized) {
     return 401, err
 }
 
 // APIError from a previous example
 var apiErr APIError
-if error.As(err, &apiErr) {
+if errors.As(err, &apiErr) {
     return apiErr.StatusCode, apiErr
 }
 
 return 200, nil
 ```
 
-In this example, `errors.Is` navigate the `err`'s error tree, returning `true`
+In this example, `errors.Is` navigate the error tree of `err`, returning `true`
 if it finds an instance of `auth.ErrUnauthorized`.
 On the other hand, `errors.As` navigate the same tree looking for _some_ error
 of the `APIError` type, and assigns it to the given pointer to `apiErr`.
-I'm sure that some of you thinks that `errors.As` is a little clunky, and
+I'm sure that some of you think that `errors.As` is a little clunky, and
 personally I agree. Fortunately Go 1.26 will introduce (or introduced, if you 
 are reading this in the future) a new:
 
@@ -415,18 +418,20 @@ if apiErr, ok := error.AsType[APIError](err); ok {
 }
 ```
 
-Needless to say that this is MUCH cleaner and, as a bonus, it's also reflection 
+Needless to say, this is MUCH cleaner and, as a bonus, it's also reflection 
 free. 
 
-### Rule n.17
-Don't compare errors against each others, as the comparison with `==` doesn't
-go through the tree. Use `errors.Is`, and `errors.As` or `errors.AsType` instead.
+### Rule No.16
+Don't compare errors against each other, as the comparison with `==` doesn't
+go throughout the tree. Use `errors.Is`, and `errors.As` or `errors.AsType` instead.
 
-### Rule n.18
+### Rule No.17
 Prefer creating public sentinel errors and types over private ones: you'll never know who
-is gonna need to `error.Is/As/AsType`-them.
+is going to need to `errors.Is/As/AsType`-them. But be aware that it's a trade-off, as
+they become part of the API commitment you share with the other developers using your
+code.
 
-### Rule n.19
+### Rule No.18
 Prefer `errors.AsType` over `errors.As`: it is more efficient and has a cleaner signature!
 
 ---
