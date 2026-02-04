@@ -487,3 +487,5 @@ Prefer `errors.AsType` over `errors.As`: it is more efficient and has a cleaner 
 Mattia Girolimetto - A.K.A. Specialfish9
 
 22/01/2026
+
+</main>
