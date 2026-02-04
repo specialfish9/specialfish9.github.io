@@ -1,50 +1,7 @@
 ---
-layout: none
+layout: default
+title: Go and Errors
 ---
-
-<style>
-body {
-  margin: 0;
-  padding: 3rem 1.5rem;
-  background: #000;
-  color: #fff;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-               Roboto, Helvetica, Arial, sans-serif;
-  line-height: 1.6;
-}
-
-main {
-  max-width: 720px;
-  margin: 0 auto;
-}
-
-a {
-  color: #6cf;
-  text-decoration: none;
-}
-
-a:hover {
-  text-decoration: underline;
-}
-
-pre {
-  background: #0e0e0e;
-  padding: 1rem;
-  overflow-x: auto;
-  border-radius: 4px;
-}
-
-code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.95rem;
-}
-
-p code {
-  color: #ffcc66;
-}
-</style>
-
-<main>
 
 # Go and Errors
 
@@ -487,5 +444,3 @@ Prefer `errors.AsType` over `errors.As`: it is more efficient and has a cleaner 
 Mattia Girolimetto - A.K.A. Specialfish9
 
 22/01/2026
-
-</main>
