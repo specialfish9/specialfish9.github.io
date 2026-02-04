@@ -2,12 +2,21 @@
 layout: default
 title: Go and Errors
 ---
+
 # Go and Errors
 
 If you have experience with other programming languages, when you first
 deal with the way Go handles errors, chances are that you will ask yourself
 "why?!". In this blog post I will _go_ (no pun intended)
 through some rules of thumb that I find useful when programming in Go.
+
+__Important note__: I will illustrate three types of rules:
+- Conventions _(C)_: these are rules defined by the Go team. You should
+  always follow them.
+- Best practices _(B)_: these are widely accepted rules in the Go community.
+  You should follow them unless you have a good reason not to.
+- Personal opinions _(P)_: these are my personal preferences, and
+  you may disagree with them. 
 
 ## The basics
 Let's start simple: in Go errors are simple values, much like all the other
@@ -24,7 +33,7 @@ func doStuff1() error
 func doStuff2() (int, error)
 ```
 
-### Rule No.1
+### Rule No.1 (C)
 If a function has multiple return values, the `error` should always be
     the last one.
 
@@ -47,10 +56,10 @@ of online threads arguing whether the language should do something
 about it. However, as always with Go's philosophy, explicit is better
 than implicit and, by consequence, `if err != nil` won.
 
-### Rule No.2
+### Rule No.2 (B)
 Always prefer `if err != nil` over `if err == nil` statements. 
 
-### Rule No.3
+### Rule No.3 (B)
 When calling a function that returns an error, you should always
 check it. If, for some reason, you don't want to, be sure to highlight
 it using the blank identifier `_`:
@@ -109,7 +118,7 @@ func MyWonderfulAPI() error {
 }
 ```
 
-### Rule No.4
+### Rule No.4 (P)
 When writing a signature for a public function, prefer returning
 `error` over your custom error type:
 ```go
@@ -171,15 +180,15 @@ service: can't initialize cache: file 'insertFileName.here' not found
 Writing a good error message is kind of hard, and it comes with experience 
 I guess. Here are some rules that I personally find useful.
 
-### Rule No.6
+### Rule No.6 (C)
 Error messages should always start with a lowercase letter and should always be
 chained using a colon (`:`).
 
-### Rule No.7
+### Rule No.7 (B)
 Add context to errors only when it is needed. Do not abuse it, otherwise the error message
 will become tedious to read.
 
-### Rule No.8
+### Rule No.8 (P)
 Try to avoid writing the word "error" in the message as it will cause the message's
 length to increase, and it's probably already implicit:
 ```
@@ -187,7 +196,7 @@ error initializing app: cron service: error starting "someRandomJob" job: cache
 service: error while initializing cache: error: file 'insertFileName.here' not found
 ```
 
-### Rule No.9
+### Rule No.9 (P)
 Sometimes it is useful to add a label with the name of the component handling the error
 (e.g.: `cron service:`), just to highlight that the error passed through that component.
 However, this should only be done in public functions, to avoid the risk of having it
@@ -200,23 +209,19 @@ from db: user not found
 Last but not least, Go offers another way of handling errors: panicking. It's okay
 to panic, but it should be done very, very carefully. For those who live under a
 rock, the Go programming language offers a `panic` function, which causes the program
-to crash. This must be used only as your code's last resort. I usually follow the next
+to crash. If you return an error, you give the option to recover what is recoverable
+and optionally panic. Instead, when you panic, you make the decision on behalf of the
+calling code. This must be used only as your code's last resort. I usually follow the next
 rule:
 
-### Rule No.10
-`panic` only in the `main` function.
-
-When a panic occurs, there had better be an error message attached to it, explaining
-the full history from the very beginning to the source of the failure.
-The last thing you want is for
-your application to crash for a panic in some function invoked by a dependency of your
-dependency, without knowing who invoked it and why. 
+### Rule No.10 (B)
+Don't `panic` if it's not strictly necessary.
 
 With that said, sometimes there is really no other thing to do: it might be that you can't
 proceed with the flow, and you can't return a normal error at the same time. In that case,
 panicking is indeed okay, but 
 
-### Rule No.11
+### Rule No.11 (B)
 Advise the developer who's going to call your panicking function with a godoc comment.
 
 Additionally, sometimes it's useful for a package to offer two versions of the same utility
@@ -233,13 +238,13 @@ func Compile(expr string) (*Regexp, error)
 func MustCompile(str string) *Regexp
 ```
 
-### Rule No.12
+### Rule No.12 (B)
 Use the prefix "Must" in your function's name if it panics instead of returning 
 an error.
 
 While we are here, there's another bonus rule related to handling errors
 
-### Rule No.13
+### Rule No.13 (P)
 Never log AND return the error, as it could lead to the same error being logged 
 multiple times.
 
@@ -276,7 +281,7 @@ simplicity's sake, but in a real life scenario you would probably want to
 add some context to the errors returned by `check`, for example which input
 failed.
 
-### Rule No.14
+### Rule No.14 (B)
 Use `errors.Join` when dealing with combined errors.
 
 Now that I introduced you to combined errors, it is time to abandon our "matrioska"
@@ -344,7 +349,7 @@ func (ae *APIError) Unwrap() error {
 ```
 
 
-### Rule No.15
+### Rule No.15 (P)
 If your custom error contains another error inside, always implement the `Unwrap`
 method, as (__Spoiler alert!__) the `Unwrap` method will be used by some cool
 functions to navigate the tree.
@@ -421,17 +426,17 @@ if apiErr, ok := error.AsType[APIError](err); ok {
 Needless to say, this is MUCH cleaner and, as a bonus, it's also reflection 
 free. 
 
-### Rule No.16
+### Rule No.16 (C)
 Don't compare errors against each other, as the comparison with `==` doesn't
 go throughout the tree. Use `errors.Is`, and `errors.As` or `errors.AsType` instead.
 
-### Rule No.17
+### Rule No.17 (P)
 Prefer creating public sentinel errors and types over private ones: you'll never know who
 is going to need to `errors.Is/As/AsType`-them. But be aware that it's a trade-off, as
 they become part of the API commitment you share with the other developers using your
 code.
 
-### Rule No.18
+### Rule No.18 (P)
 Prefer `errors.AsType` over `errors.As`: it is more efficient and has a cleaner signature!
 
 ---
